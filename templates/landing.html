@@ -1,27 +1,81 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bot4Univ</title>
-  <link rel="stylesheet" href="/stactic/css/landing.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BotInterface — Accueil</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
 </head>
-
 <body>
-  <header class="header">
-    <h1>Bot4Univ</h1>
-    <p class="slogan">Votre assistant intelligent et bienveillant 👌</p>
+  <header class="header landing-header">
+    <div class="header-content">
+      <div class="logo-section">
+        <div class="logo-circle"><span class="logo-text">B</span></div>
+        <h1 class="app-title">🤖 BotInterface</h1>
+      </div>
+      <div class="header-actions">
+        <a class="btn-ghost" href="#features">Fonctionnalités</a>
+        <a class="btn-primary" href="/app">Essayer gratuitement</a>
+      </div>
+    </div>
   </header>
 
-  <main>
-    <div class="card">
-      <p>Discutez avec Bot4Univ et obtenez des réponses instantanées et utiles.</p>
-      <button id="startChat" class="btn">💬 Commencer la discussion</button>
-    </div>
+  <main class="landing-main">
+    <section class="hero">
+      <div class="hero-left">
+        <h2 class="hero-title">Un assistant intelligent pour votre projet</h2>
+        <p class="hero-subtitle">Intégrez facilement un chatbot puissant à votre application Flask — testez-le directement ici.</p>
+        <div class="hero-ctas">
+          <a class="btn-primary large" href="/app">Essayer maintenant</a>
+          <a class="btn-secondary large" href="#docs">Documentation</a>
+        </div>
+        <ul class="trust-list">
+          <li>Gratuit</li>
+          <li>Open Source</li>
+          <li>Sécurisé</li>
+        </ul>
+      </div>
+      <div class="hero-right">
+        <!-- Embed the mockup SVG as an image for preview -->
+        <img src="/docs/ui-mockups/mockups/desktop/landing.svg" alt="Aperçu du produit" class="hero-preview">
+      </div>
+    </section>
+
+    <section id="features" class="features">
+      <h3 class="section-title">Ce que vous pouvez faire</h3>
+      <div class="features-grid">
+        <article class="feature">
+          <h4>Conversation en temps réel</h4>
+          <p>Envoyez un message et recevez une réponse immédiatement — supporte l'historique et les sessions.</p>
+        </article>
+        <article class="feature">
+          <h4>Facile à intégrer</h4>
+          <p>Utilisez notre API simple ou le SDK pour connecter votre bot préféré en quelques lignes.</p>
+        </article>
+        <article class="feature">
+          <h4>Personnalisable</h4>
+          <p>Adaptez le comportement du bot et l'UI au style de votre produit.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="docs" class="docs-cta">
+      <h3>Prêt à commencer ?</h3>
+      <p>Consultez la documentation pour apprendre à connecter une vraie API de bot et à stocker les conversations.</p>
+      <a class="btn-primary" href="/app">Lancer le chat</a>
+    </section>
   </main>
 
-  <footer>© 2025 Bot4Univ — Créé avec amour 💙  par le Groupe 19 sous la supervion de Dr Moskoulai</footer>
-  
-  <script src="/stactic/js/landing.js"></script>
+  <footer class="landing-footer">
+    <div class="footer-inner">
+      <p>&copy; 2025 BotInterface — Construit avec ❤️</p>
+      <nav>
+        <a href="#">Mentions</a>
+        <a href="#">Licence</a>
+        <a href="#">Contact</a>
+      </nav>
+    </div>
+  </footer>
+
 </body>
 </html>
