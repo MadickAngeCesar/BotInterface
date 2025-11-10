@@ -23,8 +23,7 @@ const elements = {
     errorAlert: null,
     errorMessage: null,
     errorDetails: null,
-    retryBtn: null,
-    charCount: null
+    retryBtn: null
 };
 
 // Initialize app when DOM is loaded
@@ -53,7 +52,6 @@ function initializeElements() {
     elements.errorMessage = document.getElementById('errorMessage');
     elements.errorDetails = document.getElementById('errorDetails');
     elements.retryBtn = document.getElementById('retryBtn');
-    elements.charCount = document.getElementById('charCount');
 }
 
 /**
@@ -74,7 +72,6 @@ function attachEventListeners() {
     // Auto-resize textarea
     elements.messageInput.addEventListener('input', () => {
         autoResizeTextarea();
-        updateCharCount();
     });
     
     // New chat button
@@ -101,21 +98,7 @@ function attachEventListeners() {
 function autoResizeTextarea() {
     const textarea = elements.messageInput;
     textarea.style.height = 'auto';
-    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
-}
-
-/**
- * Update character count
- */
-function updateCharCount() {
-    const count = elements.messageInput.value.length;
-    elements.charCount.textContent = `${count} / 2000`;
-    
-    if (count > 1900) {
-        elements.charCount.style.color = '#dc3545';
-    } else {
-        elements.charCount.style.color = '#6c757d';
-    }
+    textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
 }
 
 /**
@@ -132,7 +115,6 @@ async function handleSendMessage() {
     // Clear input
     elements.messageInput.value = '';
     elements.messageInput.style.height = 'auto';
-    updateCharCount();
     
     // Hide empty state and show chat
     if (elements.emptyState && !elements.emptyState.classList.contains('hidden')) {
@@ -211,10 +193,14 @@ function addMessage(role, content) {
     state.messages.push(message);
     
     const messageElement = createMessageElement(message);
-    elements.messagesWrapper.appendChild(messageElement);
     
-    // Scroll to bottom
-    scrollToBottom();
+    // Ensure messages wrapper exists and is ready
+    if (elements.messagesWrapper) {
+        elements.messagesWrapper.appendChild(messageElement);
+        
+        // Scroll to bottom
+        scrollToBottom();
+    }
 }
 
 /**
@@ -332,22 +318,60 @@ function startNewChat() {
     }
     
     if (confirm('Voulez-vous vraiment démarrer une nouvelle conversation ? Les messages actuels seront effacés.')) {
-        // Clear state
+        // Clear state completely
         state.messages = [];
         state.sessionId = null;
+        state.isLoading = false;
         
-        // Clear UI
-        elements.messagesWrapper.innerHTML = '';
+        // Clear UI - force remove all message elements
+        if (elements.messagesWrapper) {
+            // Remove all child nodes
+            while (elements.messagesWrapper.firstChild) {
+                elements.messagesWrapper.removeChild(elements.messagesWrapper.firstChild);
+            }
+        }
+        
+        // Reset chat container visibility
+        if (elements.chatContainer) {
+            elements.chatContainer.classList.remove('active');
+        }
         
         // Show empty state
-        elements.chatContainer.classList.remove('active');
-        elements.emptyState.classList.remove('hidden');
+        if (elements.emptyState) {
+            elements.emptyState.classList.remove('hidden');
+        }
         
-        // Hide error if shown
+        // Hide any errors or loading states
         hideError();
+        hideLoading();
         
-        // Focus input
-        elements.messageInput.focus();
+        // Reset input
+        if (elements.messageInput) {
+            elements.messageInput.value = '';
+            elements.messageInput.style.height = 'auto';
+            elements.messageInput.disabled = false;
+        }
+        
+        // Reset send button
+        if (elements.sendBtn) {
+            elements.sendBtn.disabled = false;
+        }
+        
+        // Clear session storage if exists
+        try {
+            sessionStorage.removeItem('bot4univ_session');
+        } catch (e) {
+            console.log('Session storage not available');
+        }
+        
+        // Focus input for new conversation
+        setTimeout(() => {
+            if (elements.messageInput) {
+                elements.messageInput.focus();
+            }
+        }, 100);
+        
+        console.log('[NEW CHAT] Session complètement réinitialisée');
     }
 }
 
