@@ -67,27 +67,31 @@ Une interface web moderne et intuitive pour interagir avec un assistant intellig
 
 ## 🎯 À propos
 
-**Bot4Univ** est un assistant intelligent développé spécifiquement pour l'écosystème universitaire. Notre mission est de faciliter l'accès à l'information et d'améliorer l'expérience d'apprentissage pour les étudiants et les enseignants.
+**Bot4Univ** est un assistant intelligent développé spécifiquement pour accompagner les **préinscriptions à l'Université de Douala**. Notre mission est de simplifier le processus de préinscription en fournissant un assistant IA disponible 24/7 pour répondre aux questions des futurs étudiants.
 
-Conçu avec les dernières technologies d'intelligence artificielle, Bot4Univ offre des réponses contextuelles, rapides et pertinentes à vos questions académiques, le tout dans une interface moderne et intuitive.
+Conçu avec les dernières technologies d'intelligence artificielle (Google Gemini), Bot4Univ offre des réponses contextuelles, rapides et pertinentes sur les démarches de préinscription, les documents requis, et guide les utilisateurs vers le portail officiel SYSTHAG de l'Université de Douala.
 
 ## ✨ Fonctionnalités
 
 ### 🌐 Landing Page
 - ✅ **Page d'accueil moderne** - Design attrayant avec sections informatives
-- ✅ **Navigation fluide** - Menu avec liens vers Accueil, Fonctionnalités, À propos
-- ✅ **Menu mobile** - Menu hamburger responsive pour les petits écrans
-- ✅ **Section hero** - Présentation claire avec CTAs "Commencer" et "Documentation"
+- ✅ **Navigation fluide** - Menu avec liens vers Accueil, Fonctionnalités, À propos, Université
+- ✅ **Menu hamburger responsive** - Actif sur tablettes et mobiles (≤1000px)
+- ✅ **Section hero** - Mise en avant de la préinscription UDo avec CTAs clairs
+- ✅ **Boutons d'action** - Accès direct au chat et au portail de préinscription SYSTHAG
 - ✅ **Statistiques** - 100% Open Source, 24/7 Disponible, ∞ Questions
 - ✅ **Footer personnalisé** - Crédits Groupe 19 et Dr Justin Moskolai
 
 ### 💬 Interface de Chat
-- ✅ **Chat en temps réel** - Échanges instantanés avec le bot
+- ✅ **Chat en temps réel** - Échanges instantanés avec l'assistant IA Gemini
 - ✅ **Interface intuitive** - Design moderne inspiré des applications de messagerie
+- ✅ **Bannière préinscription** - Accès direct au portail SYSTHAG depuis le chat
 - ✅ **États visuels** - Empty state, loading, erreurs avec retry
 - ✅ **Avatar du bot** - Identité visuelle cohérente
-- ✅ **Historique** - Conservation et affichage des conversations
-- ✅ **Nouveau chat** - Fonction pour démarrer une nouvelle conversation
+- ✅ **Historique** - Conservation et affichage des conversations via SQLite
+- ✅ **Nouveau chat** - Réinitialisation complète pour démarrer une nouvelle conversation
+- ✅ **Zone de saisie optimisée** - Hauteur réduite, meilleure visibilité des éléments
+- ✅ **Focus préinscription** - L'IA guide spécifiquement sur les démarches UDo
 
 ### 🎨 Design & UX
 - ✅ **Responsive Design** - Compatible desktop, tablette et mobile
@@ -98,12 +102,14 @@ Conçu avec les dernières technologies d'intelligence artificielle, Bot4Univ of
 - ✅ **Accessibilité** - Navigation au clavier, labels ARIA
 
 ### 🔌 Backend & API
-- ✅ **API REST** - Endpoints `/api/chat` et `/api/history`
-- ✅ **Gestion des sessions** - Maintien du contexte des conversations
-- ✅ **Gemini AI** - Génération de réponses via Google Gemini (obligatoire)
-- ✅ **Gestion d'erreurs** - 502/500 en cas d'indisponibilité de l'API IA
-- ✅ **Architecture MVC** - Code organisé et maintenable
- - ✅ **Préinscription UDo** - Le chatbot est optimisé pour accompagner la préinscription à l'Université de Douala. Configurez `PREINSCRIPTION_URL` pour le lien officiel.
+- ✅ **API REST** - Endpoints `/api/chat`, `/api/history`, `/api/ai/health`
+- ✅ **Gestion des sessions** - Maintien du contexte avec SQLite (UUID, timestamps)
+- ✅ **Gemini AI** - Génération de réponses via Google Gemini 2.5 Flash (obligatoire)
+- ✅ **Retry & Resilience** - Gestion automatique des erreurs transitoires (503)
+- ✅ **Gestion d'erreurs** - 502 en cas d'échec IA (conforme au diagramme de séquence)
+- ✅ **Architecture modulaire** - Routes, services et DB séparés (MVC)
+- ✅ **Préinscription UDo** - Prompts IA optimisés pour guider sur la préinscription
+- ✅ **Configuration flexible** - Variables d'environnement via `.env`
 
 ## 🏗️ Architecture
 
@@ -117,18 +123,18 @@ Le projet suit une architecture MVC (Model-View-Controller) avec Flask :
 │  │  (HTML/CSS)  │  │  (HTML/CSS/JS)│  │  (SVG/IMG)   │ │
 │  └──────────────┘  └──────────────┘  └──────────────┘ │
 └─────────────────────────────────────────────────────────┘
-                          ↕ HTTP
+                          ↕ HTTP/REST
 ┌─────────────────────────────────────────────────────────┐
 │                   FLASK BACKEND                          │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
-│  │   Routes     │  │  API Logic   │  │   Sessions   │ │
-│  │  / & /app    │  │  /api/chat   │  │ In-Memory DB │ │
+│  │   Routes     │  │   Services   │  │   Database   │ │
+│  │  Blueprints  │  │ Gemini AI    │  │    SQLite    │ │
 │  └──────────────┘  └──────────────┘  └──────────────┘ │
 └─────────────────────────────────────────────────────────┘
-                          ↕ HTTP
+                          ↕ API
 ┌─────────────────────────────────────────────────────────┐
-│                  EXTERNAL BOT API                        │
-│              (ou Mock Responses)                         │
+│                  GOOGLE GEMINI API                       │
+│           (gemini-2.5-flash + retry logic)               │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -235,11 +241,30 @@ L'application sera accessible à l'adresse : `http://localhost:5000`
 BotInterface/
 │
 ├── app.py                      # 🐍 Application Flask principale
-├── requirements.txt            # 📦 Dépendances Python
+├── requirements.txt            # 📦 Dépendances Python (Flask, Gemini, SQLite)
 ├── README.md                   # 📖 Documentation du projet
+├── .env                        # 🔐 Variables d'environnement (non versionné)
 ├── .gitignore                  # 🚫 Fichiers ignorés par Git
 │
-├── docs/                       # 📚 Documentation
+├── database/                   # 💾 Base de données SQLite
+│   ├── db.py                  # Module de gestion DB (CRUD)
+│   └── botinterface.db        # Fichier SQLite (sessions/messages)
+│
+├── route/                      # �️ Routes Flask (Blueprints)
+│   ├── page_routes.py         # Routes pages (/, /app)
+│   ├── chat_routes.py         # Routes chat (/api/chat, /api/history)
+│   └── ai_routes.py           # Routes IA (/api/ai/health)
+│
+├── service/                    # ⚙️ Services métier
+│   └── gemini_service.py      # Service Gemini (retry, prompts)
+│
+├── test/                       # 🧪 Tests
+│   ├── test_db.py             # Tests DB SQLite
+│   ├── test_integration.py    # Tests routes et APIs
+│   ├── test_gemini_connectivity.py  # Tests Gemini
+│   └── test_ai_error_path.py  # Tests gestion erreurs IA
+│
+├── docs/                       # �📚 Documentation
 │   ├── srs.pdf                # 📋 Cahier des charges (SRS)
 │   ├── diagram/               # 📊 Diagrammes Mermaid
 │   │   ├── system_architecture.mmd     # Architecture système
@@ -255,17 +280,17 @@ BotInterface/
 │
 ├── stactic/                    # 📦 Ressources statiques
 │   ├── css/
-│   │   └── styles.css         # 🎨 Styles CSS (1400+ lignes)
+│   │   └── styles.css         # 🎨 Styles CSS (1450+ lignes, responsive)
 │   ├── js/
-│   │   └── index.js           # ⚡ JavaScript frontend
+│   │   └── index.js           # ⚡ JavaScript frontend (430+ lignes)
 │   └── img/                   # 🖼️ Images et assets
 │       ├── logo.svg           # Logo Bot4Univ
 │       ├── logo.jpg           # Logo alternatif
 │       └── landing.svg        # Mockup pour landing
 │
 └── templates/                  # 📄 Templates HTML
-  ├── landing.html           # 🏠 Page d'accueil/landing (CTA Préinscription UDo)
-  └── index.html             # 💬 Interface de chat (bannière préinscription)
+    ├── landing.html           # 🏠 Landing page (hero préinscription)
+    └── index.html             # 💬 Interface chat (bannière SYSTHAG)
 ```
 
 ## 📚 Documentation
@@ -287,8 +312,10 @@ BotInterface/
 ## 🛠️ Technologies utilisées
 
 ### Backend
-- **[Flask 3.0.3](https://flask.palletsprojects.com/)** - Framework web Python minimaliste et puissant
-- **[Requests 2.31.0](https://requests.readthedocs.io/)** - Bibliothèque HTTP pour communiquer avec l'API bot
+- **[Flask 3.0.3](https://flask.palletsprojects.com/)** - Framework web Python avec Blueprints
+- **[SQLite 3](https://www.sqlite.org/)** - Base de données légère avec mode WAL
+- **[Google Gemini API](https://ai.google.dev/)** - Modèle IA gemini-2.5-flash
+- **[python-dotenv 1.0.1](https://pypi.org/project/python-dotenv/)** - Gestion des variables d'environnement
 - **Python 3.8+** - Langage de programmation backend
 
 ### Frontend
@@ -332,9 +359,9 @@ Le projet utilise un design system cohérent avec :
 ## 📱 Interface Responsive
 
 ### Breakpoints
-- **Desktop** : > 1000px (navigation horizontale, grid 3 colonnes)
-- **Tablette** : 521-1000px (grid 2 colonnes, navigation ajustée)
-- **Mobile** : ≤ 520px (menu hamburger, layout vertical, grid 1 colonne)
+- **Desktop** : > 1000px (navigation horizontale, 2 boutons header)
+- **Tablette** : 521-1000px (menu hamburger actif, grid adapté)
+- **Mobile** : ≤ 520px (menu hamburger, layout vertical, boutons empilés)
 
 ### Adaptations mobiles
 - Menu hamburger avec overlay
@@ -365,20 +392,24 @@ Les contributions sont les bienvenues ! Voici comment contribuer :
 ## ✅ Statut du projet
 
 ### Fonctionnalités complétées ✅
-- [x] Landing page complète avec navigation
-- [x] Interface de chat fonctionnelle
-- [x] Menu mobile responsive
-- [x] Backend Flask avec API REST
-- [x] Gestion des sessions et historique
-- [x] Mock responses pour développement
-- [x] Logo et design system
-- [x] Documentation complète (diagrammes, mockups)
-- [x] Responsive design (desktop/tablette/mobile)
+- [x] Landing page avec focus préinscription Université de Douala
+- [x] Interface de chat fonctionnelle avec Gemini AI
+- [x] Menu hamburger responsive (tablettes et mobiles)
+- [x] Backend Flask modulaire (routes, services, DB)
+- [x] Base de données SQLite avec persistance des sessions
+- [x] Intégration Gemini 2.5 Flash avec retry automatique
+- [x] Gestion d'erreurs conforme au diagramme de séquence
+- [x] Bannière et CTAs vers le portail SYSTHAG
+- [x] Logo et design system cohérent
+- [x] Documentation complète (diagrammes, mockups, tests)
+- [x] Responsive design optimisé (desktop/tablette/mobile)
+- [x] Zone de saisie optimisée sans compteur de caractères
+- [x] Réinitialisation complète des conversations (nouveau chat)
 
 ### En cours de développement 🚧
-- [ ] Intégration avec API bot réelle
-- [ ] Base de données (PostgreSQL/Redis)
-- [ ] Authentification utilisateur
+- [ ] Analytics des questions de préinscription fréquentes
+- [ ] Support multilingue (français/anglais)
+- [ ] Authentification étudiants (optionnel)
 
 ## 📝 Roadmap
 
@@ -389,19 +420,20 @@ Les contributions sont les bienvenues ! Voici comment contribuer :
 - [x] Documentation
 
 ### Phase 2 : Production 🎯 (En cours)
-- [ ] Intégration API bot réelle
-- [ ] Base de données persistante
-- [ ] Tests unitaires et d'intégration (pytest)
+- [x] Intégration Gemini AI réelle
+- [x] Base de données SQLite persistante
+- [ ] Tests unitaires et d'intégration complets (pytest)
 - [ ] CI/CD avec GitHub Actions
-- [ ] Déploiement (Heroku/Railway)
+- [ ] Déploiement (Heroku/Railway/VPS)
 
 ### Phase 3 : Améliorations 🚀 (Futur)
+- [ ] FAQ préinscription avec réponses instantanées
+- [ ] Liste dynamique des documents requis
 - [ ] Support multilingue (français/anglais)
 - [ ] Mode sombre
 - [ ] Export de conversations (PDF/TXT)
 - [ ] Recherche dans l'historique
-- [ ] Partage de conversations
-- [ ] Notifications push
+- [ ] Notifications de rappel (dates importantes)
 - [ ] PWA (Progressive Web App)
 
 ## 🐛 Bugs connus
@@ -409,9 +441,10 @@ Les contributions sont les bienvenues ! Voici comment contribuer :
 Aucun bug majeur connu pour le moment. Si vous en trouvez, veuillez [ouvrir une issue](https://github.com/josepha237/BotInterface/issues).
 
 ### Améliorations possibles
-- Remplacer le stockage in-memory par une vraie base de données
-- Ajouter la persistance des conversations entre sessions
-- Améliorer la gestion des erreurs réseau
+- Ajouter un système de feedback sur les réponses
+- Intégrer un calendrier des dates importantes de préinscription
+- Créer une FAQ interactive avec les questions les plus fréquentes
+- Améliorer les prompts IA avec des données réelles de l'UDo
 
 ## 📄 Licence
 
@@ -440,13 +473,16 @@ Pour toute question ou suggestion, n'hésitez pas à :
 
 ## 🎓 Contexte académique
 
-Ce projet a été développé dans le cadre d'un projet universitaire sous la coordination de **Dr Justin Moskolai**. Bot4Univ représente une initiative pour améliorer l'expérience d'apprentissage grâce à l'intelligence artificielle.
+Ce projet a été développé dans le cadre d'un projet universitaire sous la coordination de **Dr Justin Moskolai**. Bot4Univ représente une initiative pour **simplifier et moderniser le processus de préinscription à l'Université de Douala** en utilisant l'intelligence artificielle conversationnelle.
 
 ### Objectifs pédagogiques
-- Application des concepts de génie logiciel
-- Développement d'une application web complète
+- Application des concepts de génie logiciel et architecture MVC
+- Développement d'une application web complète avec IA
+- Intégration d'APIs externes (Google Gemini)
+- Gestion de base de données et persistance
 - Travail en équipe et gestion de projet
 - Documentation technique et professionnelle
+- Tests et validation de logiciel
 
 ---
 
