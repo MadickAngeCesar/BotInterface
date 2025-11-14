@@ -179,6 +179,17 @@ html, body {
     margin-left: auto;
 }
 
+/* User name display in header */
+.user-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-white);
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
 /* Mobile menu toggle button */
 .menu-toggle {
     display: none;

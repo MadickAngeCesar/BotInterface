@@ -46,7 +46,7 @@ def validate_password(password):
 def login_page():
     """Render login page"""
     if 'user_id' in session:
-        return redirect(url_for('pages.chat'))
+        return redirect(url_for('pages.app_index'))
     return render_template('login.html')
 
 
@@ -54,7 +54,7 @@ def login_page():
 def register_page():
     """Render registration page"""
     if 'user_id' in session:
-        return redirect(url_for('pages.chat'))
+        return redirect(url_for('pages.app_index'))
     return render_template('register.html')
 
 
@@ -131,6 +131,7 @@ def login():
         # For now, create simple session (will be implemented with auth_service.py)
         session['user_id'] = 'temp_user_id'
         session['user_email'] = email
+        session['user_name'] = email.split('@')[0]  # Extract name from email for now
         session.permanent = remember
         
         return jsonify({
@@ -234,7 +235,8 @@ def get_current_user():
         return jsonify({
             'user': {
                 'id': session.get('user_id'),
-                'email': session.get('user_email')
+                'email': session.get('user_email'),
+                'full_name': session.get('user_name')
             }
         }), 200
     except Exception as e:
